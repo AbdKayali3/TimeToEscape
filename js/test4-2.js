@@ -1,14 +1,16 @@
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
 canvas.width = 1280;
-canvas.height = 720;
+canvas.height = 705;
+unit = 32;
+gridSize = unit;
 
 class Box {
-    constructor(x, y) {
+    constructor(x, y, width, height) {
         this.x = x;
         this.y = y;
-        this.width = 64;
-        this.height = 32;
+        this.width = width;
+        this.height = height;
         this.isDragging = false;
     }
 
@@ -34,7 +36,7 @@ class Wall {
 
 class Level {
     constructor() {
-        this.box = new Box(32, 32);
+        this.box = new Box(unit, unit, unit, unit);
         this.walls = [
             new Wall(0, 0, canvas.width, 32), // top wall
             new Wall(0, canvas.height - 32, canvas.width, 32), // bottom wall
@@ -43,17 +45,78 @@ class Level {
         ];
     }
 
-    update(mouseX, mouseY) {
+    start() {
+
+    }
+
+    // events() {
+
+    // }
+
+    update() {
+        canvas.addEventListener("mousedown", (event) => {
+            let mouseX = event.clientX - canvas.offsetLeft;
+            let mouseY = event.clientY - canvas.offsetTop;
+        
+            // check if box was clicked
+            if (
+                mouseX >= this.box.x &&
+                mouseX <= this.box.x + this.box.width &&
+                mouseY >= this.box.y &&
+                mouseY <= this.box.y + this.box.height
+            ) {
+                this.box.isDragging = true; // start dragging box
+            }
+        });
+        
+        canvas.addEventListener("mouseup", (event) => {
+            this.box.isDragging = false; // stop dragging box
+        });
+        
+        canvas.addEventListener("mousemove", (event) => {
+            let mouseX = event.clientX - canvas.offsetLeft;
+            let mouseY = event.clientY - canvas.offsetTop;
+            this.moveBox(mouseX, mouseY);
+        });
+    }
+
+    draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+        for (let i = 0; i < this.walls.length; i++) {
+            let wall = this.walls[i];
+            wall.draw();
+        }
+        this.box.draw();
+
+        // draw grid
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+    }
+
+
+    moveBox(mouseX, mouseY) {
         if (this.box.isDragging) {
             // snap box position to grid
-            var snappedX = Math.floor(mouseX / 32) * 32;
-            var snappedY = Math.floor(mouseY / 64) * 64;
+            let snappedX = Math.floor(mouseX / gridSize) * gridSize;
+            let snappedY = Math.floor(mouseY / gridSize) * gridSize;
 
             // prevent box from moving through walls
-            var canMoveX = true;
-            var canMoveY = true;
-            for (var i = 0; i < this.walls.length; i++) {
-                var wall = this.walls[i];
+            let canMoveX = true;
+            let canMoveY = true;
+            for (let i = 0; i < this.walls.length; i++) {
+                let wall = this.walls[i];
                 if (
                     snappedX < wall.x + wall.width &&
                     snappedX + this.box.width > wall.x &&
@@ -79,45 +142,24 @@ class Level {
         }
     }
 
-    draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-        for (var i = 0; i < this.walls.length; i++) {
-            var wall = this.walls[i];
-            wall.draw();
-        }
-        this.box.draw();
-    }
 }
 
-var currentLevel = new Level();
+let currentLevel;
 
-canvas.addEventListener("mousedown", function (event) {
-    var mouseX = event.clientX - canvas.offsetLeft;
-    var mouseY = event.clientY - canvas.offsetTop;
+function init() {
+    currentLevel = new Level();
+    currentLevel.start();
+    update();
+    draw();
+}
 
-    // check if box was clicked
-    if (
-        mouseX >= currentLevel.box.x &&
-        mouseX <= currentLevel.box.x + currentLevel.box.width &&
-        mouseY >= currentLevel.box.y &&
-        mouseY <= currentLevel.box.y + currentLevel.box.height
-    ) {
-        currentLevel.box.isDragging = true; // start dragging box
-    }
-});
-
-canvas.addEventListener("mouseup", function (event) {
-    currentLevel.box.isDragging = false; // stop dragging box
-});
-
-canvas.addEventListener("mousemove", function (event) {
-    var mouseX = event.clientX - canvas.offsetLeft;
-    var mouseY = event.clientY - canvas.offsetTop;
-    currentLevel.update(mouseX, mouseY);
-});
+function update() {
+    currentLevel.update();
+}
 
 function draw() {
     currentLevel.draw();
+    setInterval(draw, 1000 / 60); // update at 60fps
 }
 
-setInterval(draw, 1000 / 60); // update at 60fps
+init();
