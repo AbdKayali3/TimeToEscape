@@ -5,18 +5,40 @@ canvas.height = 705;
 unit = 32;
 gridSize = unit;
 
-class Box {
+
+function ClaculateUnit(n) {
+    return n * unit;
+}
+
+
+class GameObject {
     constructor(x, y, width, height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    draw() {
+        // image instead of color
+        // let img = new Image();
+        // img.src = "images/box.png";
+        // ctx.drawImage(img, this.x, this.y, this.width, this.height);
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    }
+}
+
+class Box extends GameObject {
+    constructor(x, y, width, height) {
+        
+        super(x, y, width, height);
         this.isDragging = false;
     }
 
     draw() {
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        super.draw();
     }
 }
 
