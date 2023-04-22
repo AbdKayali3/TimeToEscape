@@ -19,14 +19,19 @@ class GameObject {
         this.height = height;
     }
 
-    draw() {
+    draw(color = "red", image = false, src = null) {
         // image instead of color
         // let img = new Image();
         // img.src = "images/box.png";
         // ctx.drawImage(img, this.x, this.y, this.width, this.height);
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-
+        if (image) {
+            let img = new Image();
+            img.src = src;
+            ctx.drawImage(img, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
 }
 
@@ -38,27 +43,23 @@ class Box extends GameObject {
     }
 
     draw() {
-        super.draw();
+        super.draw("red");
     }
 }
 
-class Wall {
+class Wall extends GameObject {
     constructor(x, y, width, height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        super(x, y, width, height);
     }
 
     draw() {
-        ctx.fillStyle = "black";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        super.draw("black");
     }
 }
 
 class Level {
     constructor() {
-        this.box = new Box(unit, unit, unit, unit);
+        this.box = new Box(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1));
         this.walls = [
             new Wall(0, 0, canvas.width, 32), // top wall
             new Wall(0, canvas.height - 32, canvas.width, 32), // bottom wall
