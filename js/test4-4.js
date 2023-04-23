@@ -79,8 +79,20 @@ class Box extends GameObject {
         this.isDragging = false;
     }
 
-    draw() {
-        super.draw("red");
+    draw(color = "red", image = false, src = null) {
+        super.draw(color, image, src);
+    }
+}
+
+class Props extends GameObject {
+    constructor(x, y, width, height, iscollision = false) {
+        
+        super(x, y, width, height);
+        this.iscollision = iscollision;
+    }
+
+    draw(color = "blue", image = false, src = null) {
+        super.draw(color, image, src);
     }
 }
 
@@ -89,8 +101,8 @@ class Wall extends GameObject {
         super(x, y, width, height);
     }
 
-    draw() {
-        super.draw("black");
+    draw(color = "black", image = false, src = null) {
+        super.draw(color, image, src);
     }
 }
 
@@ -138,13 +150,6 @@ class Level {
 
         this.alarmFlag  = false;
 
-        this.boxes = [
-            new Box(ClaculateUnit(4), ClaculateUnit(4), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(5), ClaculateUnit(5), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
-        ];
-        // this.box = new Box(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1));
         this.walls = [
             new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
             new Wall(0, ClaculateUnit(3), canvas.width, unit), // top wall
@@ -152,6 +157,18 @@ class Level {
             new Wall(0, ClaculateUnit(3), unit, canvas.height), // left wall
             new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height), // right wall
         ];
+
+        this.props = [
+            new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
+        ];
+
+        this.boxes = [
+            new Box(ClaculateUnit(4), ClaculateUnit(4), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(5), ClaculateUnit(5), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
+        ];
+        
 
 
         this.alarm = new Alarm(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(2), ClaculateUnit(1), 10);
@@ -171,6 +188,13 @@ class Level {
             let box = this.boxes[i];
             ColisionObjects.push(box);
             ActiveColisionObjects.push(box);
+        }
+
+        for (let i = 0; i < this.props.length; i++) {
+            let prop = this.props[i];
+            if (prop.iscollision) {
+                ColisionObjects.push(prop);
+            }
         }
 
         this.alarm.start();
@@ -247,6 +271,11 @@ class Level {
         for (let i = 0; i < this.walls.length; i++) {
             let wall = this.walls[i];
             wall.draw();
+        }
+
+        for (let i = 0; i < this.props.length; i++) {
+            let prop = this.props[i];
+            prop.draw();
         }
         // this.box.draw();
 
