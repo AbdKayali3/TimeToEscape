@@ -135,13 +135,13 @@ class Alarm extends GameObject {
     }
 
     draw(time) {
-        ctx.clearRect(this.x, this.y, this.width, this.height);
+        // ctx.clearRect(this.x, this.y, this.width, this.height);
         ctx.beginPath();
-        ctx.arc(20, 20, 15, 0, 2 * Math.PI);
+        ctx.arc(this.x, this.y, ClaculateUnit(0.5), 0, 2 * Math.PI);
         ctx.fillStyle = "red";
         ctx.fill();
-        ctx.font = "20px Arial";
-        ctx.fillText(time, 40, 25);
+        ctx.font = ClaculateUnit(1)+"px Arial";
+        ctx.fillText(time, this.x+ClaculateUnit(0.8), this.y+ClaculateUnit(0.35));
     }
 }
 
@@ -158,6 +158,8 @@ class Level {
             new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height), // right wall
         ];
 
+        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), 10);
+
         this.props = [
             new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
         ];
@@ -171,7 +173,6 @@ class Level {
         
 
 
-        this.alarm = new Alarm(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(2), ClaculateUnit(1), 10);
 
 
         
@@ -205,34 +206,38 @@ class Level {
 
 
         canvas.addEventListener("mousedown", (event) => {
-            let mouseX = event.clientX - canvas.offsetLeft;
-            let mouseY = event.clientY - canvas.offsetTop;
-            
-
-            // check if any box was clicked
-            for (let i = 0; i < this.boxes.length; i++) {
-                let box = this.boxes[i];
-                if (mouseX >= box.x && mouseX <= box.x + box.width &&
-                    mouseY >= box.y && mouseY <= box.y + box.height) {
-                    box.isDragging = true; // start dragging box
+            if (!this.alarmFlag) {
+                let mouseX = event.clientX - canvas.offsetLeft;
+                let mouseY = event.clientY - canvas.offsetTop;
+    
+                // check if any box was clicked
+                for (let i = 0; i < this.boxes.length; i++) {
+                    let box = this.boxes[i];
+                    if (mouseX >= box.x && mouseX <= box.x + box.width &&
+                        mouseY >= box.y && mouseY <= box.y + box.height) {
+                        box.isDragging = true; // start dragging box
+                    }
                 }
             }
         });
         
         canvas.addEventListener("mouseup", (event) => {
-
-            for (let i = 0; i < this.boxes.length; i++) {
-                let box = this.boxes[i];
-                if (box.isDragging) {
-                    box.isDragging = false;
+            if (!this.alarmFlag) {
+                for (let i = 0; i < this.boxes.length; i++) {
+                    let box = this.boxes[i];
+                    if (box.isDragging) {
+                        box.isDragging = false;
+                    }
                 }
             }
         });
         
         canvas.addEventListener("mousemove", (event) => {
-            let mouseX = event.clientX - canvas.offsetLeft;
-            let mouseY = event.clientY - canvas.offsetTop;
-            this.moveBox(mouseX, mouseY);
+            if (!this.alarmFlag) {
+                let mouseX = event.clientX - canvas.offsetLeft;
+                let mouseY = event.clientY - canvas.offsetTop;
+                this.moveBox(mouseX, mouseY);
+            }
         });
 
     }
