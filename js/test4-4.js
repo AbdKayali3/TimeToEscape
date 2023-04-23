@@ -1,7 +1,8 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 1280;
-canvas.height = 705;
+// canvas.height = 705;
+canvas.height = 801;
 
 // const FPS = 60;
 // const frameRate = 1000 / FPS;
@@ -93,21 +94,70 @@ class Wall extends GameObject {
     }
 }
 
+class Alarm extends GameObject {
+    constructor(x, y, width, height, time) {
+        super(x, y, width, height);
+        this.time = time;
+        this.startTime = Date.now();
+        this.alarmFlag = false;
+    }
+
+    start() {
+        window.requestAnimationFrame(() => this.tick());
+
+        console.log("alarm started");
+    }
+
+    tick() {
+        let elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+        if (elapsedTime < this.time) {
+            this.time;
+            this.draw(this.time - elapsedTime);
+            window.requestAnimationFrame(() => this.tick());
+        } else {
+            this.alarmFlag = true;
+            this.draw(0);
+        }
+
+        console.log("tick");
+    }
+
+    draw(time) {
+        ctx.clearRect(this.x, this.y, this.width, this.height);
+        ctx.beginPath();
+        ctx.arc(20, 20, 15, 0, 2 * Math.PI);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.font = "20px Arial";
+        ctx.fillText(time, 40, 25);
+    }
+}
+
 class Level {
     constructor() {
+
+        this.alarmFlag  = false;
+
         this.boxes = [
-            new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(3), ClaculateUnit(3)),
-            new Box(ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(1), ClaculateUnit(1)),
             new Box(ClaculateUnit(4), ClaculateUnit(4), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(5), ClaculateUnit(5), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(1), ClaculateUnit(1)),
+            new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
         ];
         // this.box = new Box(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(1));
         this.walls = [
-            new Wall(0, 0, canvas.width, 32), // top wall
-            new Wall(0, canvas.height - 32, canvas.width, 32), // bottom wall
-            new Wall(0, 0, 32, canvas.height), // left wall
-            new Wall(canvas.width - 32, 0, 32, canvas.height), // right wall
+            new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
+            new Wall(0, ClaculateUnit(3), canvas.width, unit), // top wall
+            new Wall(0, canvas.height - unit, canvas.width, unit), // bottom wall
+            new Wall(0, ClaculateUnit(3), unit, canvas.height), // left wall
+            new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height), // right wall
         ];
+
+
+        this.alarm = new Alarm(ClaculateUnit(1), ClaculateUnit(1), ClaculateUnit(2), ClaculateUnit(1), 10);
+
+
+        
     }
 
     start() {
@@ -123,6 +173,8 @@ class Level {
             ActiveColisionObjects.push(box);
         }
 
+        this.alarm.start();
+
     }
 
     // events() {
@@ -136,7 +188,6 @@ class Level {
             let mouseX = event.clientX - canvas.offsetLeft;
             let mouseY = event.clientY - canvas.offsetTop;
             
-            // console.log(`mouseX: ${mouseX}, mouseY: ${mouseY}`); // log mouse position
 
             // check if any box was clicked
             for (let i = 0; i < this.boxes.length; i++) {
@@ -156,8 +207,6 @@ class Level {
                     box.isDragging = false;
                 }
             }
-
-            // this.box.isDragging = false; // stop dragging box
         });
         
         canvas.addEventListener("mousemove", (event) => {
@@ -165,6 +214,7 @@ class Level {
             let mouseY = event.clientY - canvas.offsetTop;
             this.moveBox(mouseX, mouseY);
         });
+
     }
 
     draw() {
@@ -196,6 +246,9 @@ class Level {
             ctx.lineTo(canvas.width, y);
             ctx.stroke();
         }
+
+        this.alarmFlag = this.alarm.alarmFlag;
+        console.log(this.alarmFlag);
     }
 
     moveBox(mouseX, mouseY) {
