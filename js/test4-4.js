@@ -105,7 +105,7 @@ class Alarm extends GameObject {
     start() {
         window.requestAnimationFrame(() => this.tick());
 
-        console.log("alarm started");
+        // console.log("alarm started");
     }
 
     tick() {
@@ -119,7 +119,7 @@ class Alarm extends GameObject {
             this.draw(0);
         }
 
-        console.log("tick");
+        // console.log("tick");
     }
 
     draw(time) {
@@ -177,11 +177,7 @@ class Level {
 
     }
 
-    // events() {
-
-    // }
-
-    update() {
+    events() {
 
 
         canvas.addEventListener("mousedown", (event) => {
@@ -217,19 +213,13 @@ class Level {
 
     }
 
-    draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
-        for (let i = 0; i < this.walls.length; i++) {
-            let wall = this.walls[i];
-            wall.draw();
-        }
-        // this.box.draw();
+    update() { // draw each frame
 
-        // draw boxes
-        for (let i = 0; i < this.boxes.length; i++) {
-            let box = this.boxes[i];
-            box.draw();
-        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+        // zindex 0 zone//
+        //////////////////
 
         // draw grid
         ctx.strokeStyle = "black";
@@ -247,8 +237,40 @@ class Level {
             ctx.stroke();
         }
 
+
+
+
+        // zindex 1 zone//
+        //////////////////
+
+        
+        for (let i = 0; i < this.walls.length; i++) {
+            let wall = this.walls[i];
+            wall.draw();
+        }
+        // this.box.draw();
+
+
+
+        // zindex 2 zone//
+        //////////////////
+
+        // draw boxes
+        for (let i = 0; i < this.boxes.length; i++) {
+            let box = this.boxes[i];
+            box.draw();
+        }
+
+
+
+        // zindex 3 zone//
+        //////////////////
+
+        
+
+        // logic zone//
+        ///////////////
         this.alarmFlag = this.alarm.alarmFlag;
-        console.log(this.alarmFlag);
     }
 
     moveBox(mouseX, mouseY) {
@@ -298,16 +320,12 @@ let currentLevel;
 function init() {
     currentLevel = new Level();
     currentLevel.start();
-    update();
+    currentLevel.events();
     draw();
 }
 
-function update() {
-    currentLevel.update();
-}
-
 function draw() {
-    currentLevel.draw();
+    currentLevel.update();
     setInterval(draw, 1000 / 60); // update at 60fps
 }
 
