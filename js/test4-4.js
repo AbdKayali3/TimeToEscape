@@ -4,8 +4,8 @@ canvas.width = 1280;
 // canvas.height = 705;
 canvas.height = 801;
 
-// const FPS = 60;
-// const frameRate = 1000 / FPS;
+const FPS = 60;
+const frameRate = 1000 / FPS;
 
 
 const unit = 32;
@@ -13,7 +13,7 @@ const gridSize = unit;
 
 function ClaculateUnit(n) {return n * unit;}
 
-const speed = ClaculateUnit(0.5); // unit per second
+const speed = ClaculateUnit(0.25) / FPS; // unit per second
 const animationSpeed = 4; // animation_frames per second
 
 
@@ -45,6 +45,14 @@ function CollisionDetection(obj1) {
         }
     }
     return false;
+}
+
+function winning() {
+    // console.log("Win lvl");
+}
+
+function Losing() {
+    // console.log("lose lvl");
 }
 
 
@@ -97,17 +105,105 @@ class Props extends GameObject {
 }
 
 class Player extends GameObject {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, direction = "up", isMoving = true) {
         super(x, y, width, height);
-        this.isMoving = false;
-        this.direction = "right";
-        this.animationFrame = 0;
+        this.isMoving = isMoving;
+        this.direction = direction;
+        this.show = false;
     }
 
     draw(color = "green", image = false, src = null) {
+        if(this.show) {
+            super.draw(color, image, src);
+        }
+    }
+
+    move() {
+        if (this.isMoving && this.show) {
+            switch (this.direction) {
+                case "up":
+                    this.y -= speed;
+                    break;
+                case "down":
+                    this.y += speed;
+                    break;
+                case "left":
+                    this.x -= speed;
+                    break;
+                case "right":
+                    this.x += speed;
+                    break;
+            }
+        }
+    }
+
+    touch(obj) {
+        // check if player is touching door manually not using existing functions
+        // console.log(this);
+        if (this.show) {
+            if ((this.x < obj.x + obj.width &&
+                this.x + this.width > obj.x &&
+                this.y < obj.y + obj.height &&
+                this.y + this.height > obj.y))
+                {
+                if (obj.locked) {
+                    // console.log("door is locked");
+                    return false;
+                } else {
+                    // console.log("door is unlocked");
+                    this.isMoving = false;
+                    return true;
+                }
+            }
+        }
+
+        return false;   
+    }
+
+}
+
+class Enemy extends Player {
+    constructor(x, y, width, height, direction = "up", isMoving = true) {
+        super(x, y, width, height, direction, isMoving);
+        // this.show = false;
+    }
+
+    draw(color = "white", image = false, src = null) {
         super.draw(color, image, src);
     }
+
+    actiate() {
+        // watit for 3 seconds then show
+        setTimeout(() => {
+            this.show = true;
+        }, 3000);
+    }
+
+    move() {
+        super.move();
+    }
+
+    touch(obj) {
+        // check if the enemy is touching the player manually not using existing functions
+        if (this.show) {
+            if (obj.direction == this.direction) {
+                if ((this.x < obj.x + obj.width &&
+                    this.x + this.width > obj.x &&
+                    this.y < obj.y + obj.height &&
+                    this.y + this.height > obj.y))
+                    {
+                        this.isMoving = false;
+                        return true;
+                    }
+            }
+
+        }
+
+        return false;
+    }
+
 }
+            
 
 class Doors extends GameObject {
     constructor(x, y, width, height, type = "out", locked = false) {
@@ -188,8 +284,8 @@ class Level {
 
         this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), 10);
 
-        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "in");
-        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "out");
+        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "in");
+        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "out");
 
         this.props = [
             new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
@@ -201,12 +297,11 @@ class Level {
             new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(1), ClaculateUnit(1)),
             new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
         ];
-        
 
 
+        this.player = new Player(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
+        this.enemy = new Enemy(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
 
-
-        
     }
 
     start() {
@@ -334,12 +429,26 @@ class Level {
 
         // zindex 3 zone//
         //////////////////
+        if (this.player.show) {
+            this.player.draw();
+            this.playerLogic();
+        }
 
+        if (this.enemy.show) {
+            this.enemy.draw();
+            this.EnemyLogic();
+        }
         
 
         // logic zone//
         ///////////////
+
+        if(this.alarm.alarmFlag && !this.alarmFlag) {
+            this.player.show = true;
+            this.enemy.actiate();
+        }
         this.alarmFlag = this.alarm.alarmFlag;
+
     }
 
     moveBox(mouseX, mouseY) {
@@ -381,6 +490,63 @@ class Level {
             }
         }
     }
+
+    playerLogic() {
+
+        if(this.player.isMoving) {
+            this.player.move();
+        }
+
+        if (this.player.touch(this.outDoor)) {
+            winning();
+        }
+
+        //check if the player is touching any element and stop if it is
+        // the check should be only for elemts that is in the direction that the box os moving
+        // if there is collision, the player should stop moving
+        for (let i = 0; i < ActiveColisionObjects.length; i++) {
+            let obj = ActiveColisionObjects[i];
+            if (this.player.isMoving) {
+                if(SingleCollisionDetection(this.player, obj)) {
+                    if (this.player.direction === "left") {
+                        if (this.player.x < obj.x + obj.width) {
+                            this.player.isMoving = false;
+                        }
+                    }
+                    if (this.player.direction === "right") {
+                        if (this.player.x + this.player.width > obj.x) {
+                            this.player.isMoving = false;
+                        }
+                    }
+                    if (this.player.direction === "up") {
+                        if (this.player.y < obj.y + obj.height) {
+                            this.player.isMoving = false;
+                        }
+                    }
+                    if (this.player.direction === "down") {
+                        if (this.player.y + this.player.height > obj.y) {
+                            this.player.isMoving = false;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    EnemyLogic() {
+
+        if(this.enemy.isMoving) {
+            this.enemy.move();
+        }
+
+        if (this.enemy.touch(this.player)) {
+            Losing();
+        }
+
+    }
+
+
 
 }
 
