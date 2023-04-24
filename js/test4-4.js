@@ -96,6 +96,31 @@ class Props extends GameObject {
     }
 }
 
+class Player extends GameObject {
+    constructor(x, y, width, height) {
+        super(x, y, width, height);
+        this.isMoving = false;
+        this.direction = "right";
+        this.animationFrame = 0;
+    }
+
+    draw(color = "green", image = false, src = null) {
+        super.draw(color, image, src);
+    }
+}
+
+class Doors extends GameObject {
+    constructor(x, y, width, height, type = "out", locked = false) {
+        super(x, y, width, height);
+        this.type = type;
+        this.locked = locked;
+    }
+
+    draw(color = "brown", image = false, src = null) {
+        super.draw(color, image, src);
+    }
+}
+
 class Wall extends GameObject {
     constructor(x, y, width, height) {
         super(x, y, width, height);
@@ -149,6 +174,7 @@ class Level {
     constructor() {
 
         this.alarmFlag  = false;
+        this.lcoked = false;
 
         this.walls = [
             new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
@@ -158,7 +184,12 @@ class Level {
             new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height), // right wall
         ];
 
+
+
         this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), 10);
+
+        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "in");
+        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "out");
 
         this.props = [
             new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
@@ -200,10 +231,11 @@ class Level {
 
         this.alarm.start();
 
+        this.outDoor.lcoked = this.lcoked;
+
     }
 
     events() {
-
 
         canvas.addEventListener("mousedown", (event) => {
             if (!this.alarmFlag) {
@@ -277,6 +309,9 @@ class Level {
             let wall = this.walls[i];
             wall.draw();
         }
+
+        this.innerDoor.draw();
+        this.outDoor.draw();
 
         for (let i = 0; i < this.props.length; i++) {
             let prop = this.props[i];
