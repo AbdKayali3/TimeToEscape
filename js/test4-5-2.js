@@ -4,6 +4,10 @@ canvas.width = 1280;
 // canvas.height = 705;
 canvas.height = 801;
 
+const font = 'VT323';
+const gridColor = "#00000030";
+const bgColor = "#6A6A84";
+
 const FPS = 60;
 const frameRate = 1000 / FPS;
 
@@ -81,6 +85,36 @@ class GameObject {
     }
 }
 
+class TextOnly extends GameObject {
+    constructor(x, y, width, height, txt = "txt", size = ClaculateUnit(1), centerd = true) {
+        super(x, y, width, height);
+        this.txt = txt;
+        this.size = size;
+        this.centerd = centerd;
+    }
+
+    draw(color = "white", image = false, src = null) {
+
+        if (this.centerd) {
+            let fontSize = this.size;
+            ctx.font = fontSize + "px "+ font;
+            ctx.fillStyle = color;
+            let textWidth = ctx.measureText(this.txt).width;
+            let textX = this.x + (this.width - textWidth) / 2;
+            let textY = this.y + (this.height + fontSize) / 2 - fontSize * 0.2;
+            ctx.fillText(this.txt, textX, textY);
+        } else {
+            let fontSize = this.size;
+            ctx.font = fontSize + "px "+ font;
+            ctx.fillStyle = color;
+            let textX = this.x;
+            let textY = this.y + (this.height + fontSize) / 2 - fontSize * 0.2;
+            ctx.fillText(this.txt, textX, textY);
+        }
+    }
+
+}
+
 class Button extends GameObject {
     constructor(x, y, width, height, islvl = true, sceneType = 1, txt = "button", param = null ) {
         super(x, y, width, height);
@@ -90,7 +124,7 @@ class Button extends GameObject {
         this.sceneType = sceneType; // 1 == scene, 2 == level
     }
 
-    draw(color = "grey", image = false, src = null) {
+    draw(color = "#B3C1DC", image = false, src = null) {
         if (image) {
             let img = new Image();
             img.src = src;
@@ -99,8 +133,8 @@ class Button extends GameObject {
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
-        let fontSize = ClaculateUnit(0.7);
-        ctx.font = fontSize + "px Arial";
+        let fontSize = ClaculateUnit(0.9);
+        ctx.font = fontSize + "px "+ font;
         ctx.fillStyle = "black";
         // ctx.fillText(this.txt, this.x+ClaculateUnit(0.4), this.y+ClaculateUnit(1));
 
@@ -391,7 +425,7 @@ class Alarm extends GameObject {
         ctx.arc(this.x, this.y, ClaculateUnit(0.5), 0, 2 * Math.PI);
         ctx.fillStyle = "red";
         ctx.fill();
-        ctx.font = ClaculateUnit(1)+"px Arial";
+        ctx.font = ClaculateUnit(1)+"px "+ font;
         ctx.fillText(time, this.x+ClaculateUnit(0.8), this.y+ClaculateUnit(0.35));
     }
 }
@@ -399,8 +433,8 @@ class Alarm extends GameObject {
 class Scene {
     constructor() {
         this.buttons = [
-            new Button(ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), true, 2, "play", 0),
-            new Button(ClaculateUnit(6), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), false, null, "test", "test"),
+            // new Button(ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), true, 2, "play", 0),
+            // new Button(ClaculateUnit(6), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), false, null, "test", "test"),
         ];
     }
 
@@ -433,8 +467,30 @@ class Scene {
 
     update() {
 
-        
         ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+        // fill the whoel canvas with a color
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // draw grid
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+
+        
+        
 
         for (let i = 0; i < this.buttons.length; i++) {
             const btn = this.buttons[i];       
@@ -443,6 +499,110 @@ class Scene {
 
     }
 }
+
+
+class Menu extends Scene {
+    constructor() {
+        super();
+        let widthOfBtn = ClaculateUnit(6);
+        let middle = canvas.width / 2 - (widthOfBtn/2);
+
+        this.text = [
+            new TextOnly(0, ClaculateUnit(2), canvas.width, ClaculateUnit(3), "TIME TO ESCAPE", ClaculateUnit(3)),
+            new TextOnly(0, canvas.height - ClaculateUnit(3), canvas.width/3, ClaculateUnit(1), "Made by GeneralSam Games", ClaculateUnit(1)),
+        ];
+
+        this.buttons = [
+            new Button(middle, ClaculateUnit(7), widthOfBtn, ClaculateUnit(3), true, 2, "play", 0),
+            new Button(middle, ClaculateUnit(11), widthOfBtn, ClaculateUnit(3), true, 1, "How to play", 1),
+            // new Button(middle, ClaculateUnit(15), widthOfBtn, ClaculateUnit(3), true, 1, "Thank you", 2),
+        ];
+    }
+
+    start() {
+        this.events();
+        this.update();
+    }
+
+    update() {
+        super.update();
+
+        for (let i = 0; i < this.text.length; i++) {
+            const txt = this.text[i];
+            txt.draw();
+        }
+
+    }
+}
+
+class HowToPlay extends Scene {
+    constructor() {
+        super();
+        let widthOfBtn = ClaculateUnit(6);
+        let middle = canvas.width / 2 - (widthOfBtn/2);
+
+        this.text = [
+            new TextOnly(0, ClaculateUnit(2), canvas.width, ClaculateUnit(3), "How to Play?", ClaculateUnit(3), true),
+            new TextOnly(ClaculateUnit(4), ClaculateUnit(7), canvas.width/3, ClaculateUnit(1), "- You have limited time to move things around", ClaculateUnit(1), false),
+            new TextOnly(ClaculateUnit(4), ClaculateUnit(8.5), canvas.width/3, ClaculateUnit(1), "- The objective is to let the monster escape", ClaculateUnit(1), false),
+            new TextOnly(ClaculateUnit(4), ClaculateUnit(10), canvas.width/3, ClaculateUnit(1), "- Arrows change the monster direction", ClaculateUnit(1), false),
+            new TextOnly(ClaculateUnit(4), ClaculateUnit(11.5), canvas.width/3, ClaculateUnit(1), "- Step on all Pressure Pads (if exists) to unlock the door", ClaculateUnit(1), false),
+        ];
+
+        this.buttons = [
+            new Button(middle, ClaculateUnit(15), widthOfBtn, ClaculateUnit(2), true, 1, "Back", 0),
+        ];
+    }
+
+    start() {
+        this.events();
+        this.update();
+    }
+
+    update() {
+        super.update();
+
+        for (let i = 0; i < this.text.length; i++) {
+            const txt = this.text[i];
+            txt.draw();
+        }
+
+    }
+}
+
+class ThankYou extends Scene {
+    constructor() {
+        super();
+        let widthOfBtn = ClaculateUnit(6);
+        let middle = canvas.width / 2 - (widthOfBtn/2);
+
+        this.text = [
+            new TextOnly(0, ClaculateUnit(2), canvas.width, ClaculateUnit(3), "Thank you for playing", ClaculateUnit(3), true),
+            new TextOnly(0, ClaculateUnit(7), canvas.width, ClaculateUnit(1), "Feel free to leave a your feedback in the comments section", ClaculateUnit(1), true),
+            new TextOnly(0, ClaculateUnit(8.5), canvas.width, ClaculateUnit(1), "I'll be reading all of them", ClaculateUnit(1), true),
+        ];
+
+        this.buttons = [
+            new Button(middle, ClaculateUnit(13), widthOfBtn, ClaculateUnit(2), true, 1, "Main Menu", 0),
+        ];
+    }
+
+    start() {
+        this.events();
+        this.update();
+    }
+
+    update() {
+        super.update();
+
+        for (let i = 0; i < this.text.length; i++) {
+            const txt = this.text[i];
+            txt.draw();
+        }
+
+    }
+}
+
 
 class Level {
     constructor() {
@@ -874,15 +1034,20 @@ let scenes = [
     // 2 how to play
     // 3 losing screen
     // 4 thank you for playing
+    new Menu(),
+    new HowToPlay(),
+    new ThankYou(),
 ];
 
 let lvls = [
-    new Level()
+    new Level(),
+    new Level(),
+    new Level(),
 ];
 
 
 let currentScene;
-currentScene = new Scene();
+currentScene = new Menu();
 
 
 function init() {
@@ -915,7 +1080,11 @@ function lvlChanger(lvl, sceneType) {
         currentScene = scenes[lvl];
     } else {
         // currentScene = lvls[lvl];
+        if(lvl <= lvls.length - 1) {
         currentScene = lvls[lvl];
+        } else {
+            currentScene = scenes[3];
+        }
     }
     init();
 }
