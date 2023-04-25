@@ -82,25 +82,46 @@ class GameObject {
 }
 
 class Button extends GameObject {
-    constructor(x, y, width, height, islvl = true, txt = "button") {
+    constructor(x, y, width, height, islvl = true, sceneType = 1, txt = "button", param = null ) {
         super(x, y, width, height);
         this.txt = txt;
+        this.islvl = islvl;
+        this.param = param;
+        this.sceneType = sceneType; // 1 == scene, 2 == level
     }
 
-    draw(color = "blue", image = false, src = null) {
-        super.draw(color, image, src);
-    }
-
-    clicked(param) {
-        if(isislvl) {
-            changelvl(param);
+    draw(color = "grey", image = false, src = null) {
+        if (image) {
+            let img = new Image();
+            img.src = src;
+            ctx.drawImage(img, this.x, this.y, this.width, this.height);
         } else {
-            callEvent(functionName);
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        let fontSize = ClaculateUnit(0.7);
+        ctx.font = fontSize + "px Arial";
+        ctx.fillStyle = "black";
+        // ctx.fillText(this.txt, this.x+ClaculateUnit(0.4), this.y+ClaculateUnit(1));
+
+        let textWidth = ctx.measureText(this.txt).width;
+        let textX = this.x + (this.width - textWidth) / 2;
+        let textY = this.y + (this.height + (fontSize/2)) / 2;
+        ctx.fillText(this.txt, textX, textY);
+    }
+
+    clicked() {
+        console.log('clicked');
+        if(this.islvl) {
+            this.changelvl(this.param);
+        } else {
+            this.callEvent(this.param);
         }
     }
 
     changelvl(lvl) {
-        lvlChanger(lvl);
+        console.log('changelvl');
+        lvlChanger(lvl, this.sceneType);
     }
 
     callEvent(functionName) {
@@ -372,6 +393,54 @@ class Alarm extends GameObject {
         ctx.fill();
         ctx.font = ClaculateUnit(1)+"px Arial";
         ctx.fillText(time, this.x+ClaculateUnit(0.8), this.y+ClaculateUnit(0.35));
+    }
+}
+
+class Scene {
+    constructor() {
+        this.buttons = [
+            new Button(ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), true, 2, "play", 0),
+            new Button(ClaculateUnit(6), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), false, null, "test", "test"),
+        ];
+    }
+
+    start() {
+
+    }
+
+    events() {
+        for (let i = 0; i < this.buttons.length; i++) {
+
+            const btn = this.buttons[i];
+            
+            // btn.addEventListener("click", function() {
+            //     btn.clicked();
+            // });
+            canvas.addEventListener("click", function(event) {
+
+                var rect = canvas.getBoundingClientRect();
+                var mouseX = event.clientX - rect.left;
+                var mouseY = event.clientY - rect.top;
+
+                // Check if the click occurred within the bounds of the button
+                if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
+                    mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+                        btn.clicked();
+                }
+            });
+        }
+    }
+
+    update() {
+
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+        for (let i = 0; i < this.buttons.length; i++) {
+            const btn = this.buttons[i];       
+            btn.draw();
+        }
+
     }
 }
 
@@ -798,10 +867,13 @@ class Level {
 
 let lastlvlPassed = 0;
 let currentlvlIndex = 0;
-let currentSceneIndex = 0;
+// let currentSceneIndex = 0;
 
 let scenes = [
-    
+    // 1 menu
+    // 2 how to play
+    // 3 losing screen
+    // 4 thank you for playing
 ];
 
 let lvls = [
@@ -810,10 +882,10 @@ let lvls = [
 
 
 let currentScene;
+currentScene = new Scene();
 
 
 function init() {
-    currentScene = new Level();
     currentScene.start();
     currentScene.events();
     draw();
@@ -828,18 +900,23 @@ function winning() {
     clearEverything();
     lastlvlPassed = currentlvlIndex;
     currentlvlIndex++;
-    changelvl(param);
+    changelvl(param,2);
 }
 
 function Losing() {
     clearEverything();
-    lvl = currentlvlIndex;
-    lvlChanger(lvl);
+    lvlChanger(3, 1);
 }
 
-function lvlChanger(lvl) {
+function lvlChanger(lvl, sceneType) {
+    console.log('lvlChanger');
     clearEverything();
-    currentScene = lvl;
+    if(sceneType == 1) {
+        currentScene = scenes[lvl];
+    } else {
+        // currentScene = lvls[lvl];
+        currentScene = lvls[lvl];
+    }
     init();
 }
 
@@ -853,3 +930,10 @@ function clearEverything() {
 }
 
 init();
+
+
+
+
+function test() {
+    console.log("test");
+}
