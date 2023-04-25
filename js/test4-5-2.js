@@ -21,6 +21,12 @@ let DragableObjects = [];
 let ColisionObjects = [];
 let ActiveColisionObjects = [];
 
+let musicOn = true;
+let SFXOn = true;
+let artOn = true;
+
+
+
 
 
 
@@ -48,13 +54,6 @@ function CollisionDetection(obj1) {
     return false;
 }
 
-function winning() {
-    // console.log("Win lvl");
-}
-
-function Losing() {
-    // console.log("lose lvl");
-}
 
 
 class GameObject {
@@ -82,6 +81,33 @@ class GameObject {
     }
 }
 
+class Button extends GameObject {
+    constructor(x, y, width, height, islvl = true, txt = "button") {
+        super(x, y, width, height);
+        this.txt = txt;
+    }
+
+    draw(color = "blue", image = false, src = null) {
+        super.draw(color, image, src);
+    }
+
+    clicked(param) {
+        if(isislvl) {
+            changelvl(param);
+        } else {
+            callEvent(functionName);
+        }
+    }
+
+    changelvl(lvl) {
+        lvlChanger(lvl);
+    }
+
+    callEvent(functionName) {
+        window[functionName]();
+    }
+}
+
 class Box extends GameObject {
     constructor(x, y, width, height) {
         
@@ -100,11 +126,43 @@ class Arrow extends GameObject {
         this.isDragging = false;
         this.direction = direction;
         this.isreachable = true;
-        this.isreachable = true;
+        this.isarrow = true;
     }
 
     draw(color = "yellow", image = false, src = null) {
         super.draw(color, image, src);
+    }
+
+}
+
+class Switch extends GameObject {
+    constructor(x, y, width, height, locked = true) {
+        super(x, y, width, height);
+        this.locked = locked;
+        this.isreachable = true;
+        this.isarrow = false;
+    }
+
+    draw(color = "orange", image = false, src = null) {
+        if(this.locked) {
+            if (image) {
+                let img = new Image();
+                img.src = src;
+                ctx.drawImage(img, this.x, this.y, this.width, this.height);
+            } else {
+                ctx.fillStyle = "darkred";
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        } else {
+            if (image) {
+                let img = new Image();
+                img.src = src;
+                ctx.drawImage(img, this.x, this.y, this.width, this.height);
+            } else {
+                ctx.fillStyle = "darkgreen";
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
     }
 
 }
@@ -242,8 +300,29 @@ class Doors extends GameObject {
         this.locked = locked;
     }
 
+    // draw(color = "brown", image = false, src = null) {
+    //     super.draw(color, image, src);
+    // }
     draw(color = "brown", image = false, src = null) {
-        super.draw(color, image, src);
+        if(!this.locked && this.type == "out") {
+            if (image) {
+                let img = new Image();
+                img.src = src;
+                ctx.drawImage(img, this.x, this.y, this.width, this.height);
+            } else {
+                ctx.fillStyle = "darkgreen";
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        } else {
+            if (image) {
+                let img = new Image();
+                img.src = src;
+                ctx.drawImage(img, this.x, this.y, this.width, this.height);
+            } else {
+                ctx.fillStyle = "brown";
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+        }
     }
 }
 
@@ -314,8 +393,8 @@ class Level {
 
         this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), 10);
 
-        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "in");
-        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "out");
+        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "out", true);
+        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "in");
 
         this.props = [
             new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
@@ -332,8 +411,13 @@ class Level {
             new Arrow(ClaculateUnit(15), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), "left"),
         ];
 
+        this.switches = [
+            new Switch(ClaculateUnit(20), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), true),
+        ];
+
         this.player = new Player(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
         this.enemy = new Enemy(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
+
 
     }
 
@@ -358,6 +442,11 @@ class Level {
             DragableObjects.push(arrow);
         }
 
+        for (let i = 0; i < this.switches.length; i++) {
+            let switchObj = this.switches[i];
+            ColisionObjects.push(switchObj);
+        }
+
         for (let i = 0; i < this.props.length; i++) {
             let prop = this.props[i];
             if (prop.iscollision) {
@@ -367,7 +456,7 @@ class Level {
 
         this.alarm.start();
 
-        this.outDoor.lcoked = this.lcoked;
+        // this.outDoor.lcoked = this.lcoked;
 
     }
 
@@ -429,6 +518,7 @@ class Level {
 
     update() { // draw each frame
 
+        // console.log(this.outDoor.locked);
 
         ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
@@ -487,6 +577,11 @@ class Level {
         for (let i = 0; i < this.arrows.length; i++) {
             let arrow = this.arrows[i];
             arrow.draw();
+        }
+
+        for (let i = 0; i < this.switches.length; i++) {
+            let switchObj = this.switches[i];
+            switchObj.draw();
         }
 
 
@@ -575,26 +670,51 @@ class Level {
 
                     if(obj.isreachable) {
 
-                        if(obj.direction != this.player.direction) {
-
-                            if(Math.trunc(this.player.y) == obj.y || Math.trunc(this.player.x) == obj.x) {
-                                console.log("collision");
-                                this.player.direction = obj.direction;
-                            }
-
-                            // if(obj.direction == "left" || obj.direction == "right") {
-                            //     if(Math.trunc(this.player.y) == obj.y) {
-                            //         this.player.direction = obj.direction;
-                            //     }
-                            // }
+                        if(obj.isarrow) {
+                            // console.log("arrow");
+                            if(obj.direction != this.player.direction) {
     
-                            // if(obj.direction == "up" || obj.direction == "down") {
-                            //     if(Math.trunc(this.player.x) == obj.x) {
-                            //         this.player.direction = obj.direction;
-                            //     }
-                            // }
-                            
+                                // if(Math.trunc(this.player.y) == obj.y || Math.trunc(this.player.x) == obj.x) {
+                                //     console.log("collision");
+                                //     this.player.direction = obj.direction;
+                                // }
+    
+                                if(obj.direction == "left" || obj.direction == "right") {
+                                    if(Math.trunc(this.player.y) == obj.y) {
+                                        this.player.direction = obj.direction;
+                                    }
+                                }
+        
+                                if(obj.direction == "up" || obj.direction == "down") {
+                                    if(Math.trunc(this.player.x) == obj.x) {
+                                        this.player.direction = obj.direction;
+                                    }
+                                }
+                                
+                            }
+                        } else {
+                            // console.log("Switch");
+                            if(obj.locked) {
+                                // console.log("locked");
+                                obj.locked = false;
+                                let allSwitchesUnLocked = true;
+
+                                for (let i = 0; i < this.switches.length; i++) {
+                                    let switchObj = this.switches[i];
+                                    if(switchObj.locked == true) {
+                                        console.log("found a locked switch");
+                                        allSwitchesUnLocked = false;
+                                    }
+                                }
+
+                                if(allSwitchesUnLocked) {
+                                    console.log("all switches unlocked");
+                                    this.lcoked = false;
+                                    this.outDoor.locked = false;
+                                }
+                            }
                         }
+
 
                          
                     } else {
@@ -675,18 +795,61 @@ class Level {
 
 }
 
-let currentLevel;
+
+let lastlvlPassed = 0;
+let currentlvlIndex = 0;
+let currentSceneIndex = 0;
+
+let scenes = [
+    
+];
+
+let lvls = [
+    new Level()
+];
+
+
+let currentScene;
+
 
 function init() {
-    currentLevel = new Level();
-    currentLevel.start();
-    currentLevel.events();
+    currentScene = new Level();
+    currentScene.start();
+    currentScene.events();
     draw();
 }
 
 function draw() {
-    currentLevel.update();
+    currentScene.update();
     setInterval(draw, frameRate); // update at 60fps
+}
+
+function winning() {
+    clearEverything();
+    lastlvlPassed = currentlvlIndex;
+    currentlvlIndex++;
+    changelvl(param);
+}
+
+function Losing() {
+    clearEverything();
+    lvl = currentlvlIndex;
+    lvlChanger(lvl);
+}
+
+function lvlChanger(lvl) {
+    clearEverything();
+    currentScene = lvl;
+    init();
+}
+
+function clearEverything() {
+
+    DragableObjects = [];
+    ColisionObjects = [];
+    ActiveColisionObjects = [];
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 init();
