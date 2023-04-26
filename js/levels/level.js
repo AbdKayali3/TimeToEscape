@@ -378,7 +378,14 @@ class Level {
     
     
                                 if(obj.direction == "left" || obj.direction == "right") {
-                                    if(Math.trunc(this.player.y) == obj.y) {
+                                    
+                                    // console.log("-----");
+                                    // console.log(this.player.y);
+                                    // console.log(Math.trunc(this.player.y));
+                                    // console.log(obj.y);
+
+                                    // if(Math.trunc(this.player.y) == obj.y) {
+                                    if(Math.floor(this.player.y / gridSize) * gridSize == obj.y) {
                                         this.player.direction = obj.direction;
                                         
                                         // round down the player position to the grid
@@ -387,7 +394,8 @@ class Level {
                                 }
         
                                 if(obj.direction == "up" || obj.direction == "down") {
-                                    if(Math.trunc(this.player.x) == obj.x) {
+                                    // if(Math.trunc(this.player.x) == obj.x) {
+                                    if(Math.floor(this.player.x / gridSize) * gridSize == obj.x) {
                                         this.player.direction = obj.direction;
 
                                         // round down the player position to the grid
@@ -479,14 +487,16 @@ class Level {
                             // }
                             
                             if(obj.direction == "left" || obj.direction == "right") {
-                                if(Math.trunc(this.enemy.y) == obj.y) {
+                                if(Math.floor(this.enemy.y / gridSize) * gridSize == obj.y) {
                                     this.enemy.direction = obj.direction;
+                                    this.enemy.y = Math.floor(this.enemy.y / gridSize) * gridSize;
                                 }
                             }
     
                             if(obj.direction == "up" || obj.direction == "down") {
-                                if(Math.trunc(this.enemy.x) == obj.x) {
+                                if(Math.floor(this.enemy.x / gridSize) * gridSize == obj.x) {
                                     this.enemy.direction = obj.direction;
+                                    this.enemy.x = Math.floor(this.enemy.x / gridSize) * gridSize;
                                 }
                             }
                             

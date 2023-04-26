@@ -18,7 +18,7 @@ const gridSize = unit;
 
 function ClaculateUnit(n) {return n * unit;}
 
-const speed = ClaculateUnit(8) / FPS; // unit per second
+const speed = ClaculateUnit(6) / FPS; // unit per second
 const animationSpeed = 4; // animation_frames per second
 
 
