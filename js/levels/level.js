@@ -25,8 +25,13 @@ class Level {
         ];
 
 
+        if (testing) {
+            this.tTime = 30;
+        } else {
+            this.tTime = 5;
+        }
 
-        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(1.5), ClaculateUnit(2), ClaculateUnit(1), 5);
+        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(1.5), ClaculateUnit(2), ClaculateUnit(1), this.tTime);
 
         // this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "out", true);
         // this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "in");

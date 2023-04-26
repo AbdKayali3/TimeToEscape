@@ -28,6 +28,7 @@ let scenes = [
 //     Level10,
 // ];
 let lvls = [
+    Level5,
     Level4,
     Level3,
     Level2,

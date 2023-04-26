@@ -33,10 +33,6 @@ class Level4 extends Level {
 
         this.boxes = [
             new Box(ClaculateUnit(14), ClaculateUnit(4), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(this.yMain), ClaculateUnit(7), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(7), ClaculateUnit(8), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(2), ClaculateUnit(14), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(4), ClaculateUnit(17), ClaculateUnit(3), ClaculateUnit(3)),
         ];
 
         this.arrows = [

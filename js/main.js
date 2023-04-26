@@ -29,6 +29,7 @@ let ActiveColisionObjects = [];
 let musicOn = true;
 let SFXOn = true;
 let artOn = true;
+let testing = true;
 
 
 
