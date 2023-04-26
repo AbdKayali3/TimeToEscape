@@ -3,9 +3,11 @@ class Level {
 
         this.alarmFlag  = false;
         this.lcoked = false;
+        this.clickHandlers = [];
+        this.hasAlarm = true;
 
         this.walls = [
-            new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
+            // new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
             new Wall(0, ClaculateUnit(3), canvas.width, unit), // top wall
             new Wall(0, canvas.height - unit, canvas.width, unit), // bottom wall
             new Wall(0, ClaculateUnit(3), unit, canvas.height), // left wall
@@ -13,18 +15,18 @@ class Level {
         ];
 
         this.buttons = [
-            new Button( canvas.width - ClaculateUnit(4), ClaculateUnit(1), ClaculateUnit(3), ClaculateUnit(2), true, 2, "Restart", currentlvlIndex),
+            new Button( canvas.width - ClaculateUnit(4), ClaculateUnit(0.5), ClaculateUnit(3), ClaculateUnit(2), true, 2, "Restart", currentlvlIndex),
         ];
 
         let crTxt = "Current lvl: " + (currentlvlIndex + 1);
 
         this.text = [
-            new TextOnly(ClaculateUnit(2), ClaculateUnit(1.5), canvas.width/3, ClaculateUnit(1), crTxt, ClaculateUnit(1), false),
+            new TextOnly(ClaculateUnit(2), ClaculateUnit(1), canvas.width/3, ClaculateUnit(1), crTxt, ClaculateUnit(1), false),
         ];
 
 
 
-        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(1), 10);
+        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(1.5), ClaculateUnit(2), ClaculateUnit(1), 10);
 
         this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "out", true);
         this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "in");
@@ -97,93 +99,203 @@ class Level {
     }
 
     events() {
-
+        // // Remove old click handlers
+        for (let i = 0; i < this.clickHandlers.length; i++) {
+            canvas.removeEventListener("click", this.clickHandlers[i]);
+        }
+        this.clickHandlers = [];
+    
+        // Add new click handlers
         for (let i = 0; i < this.buttons.length; i++) {
-
             const btn = this.buttons[i];
-            
-            // btn.addEventListener("click", function() {
-            //     btn.clicked();
-            // });
-            canvas.addEventListener("click", function(event) {
-
-                var rect = canvas.getBoundingClientRect();
-                var mouseX = event.clientX - rect.left;
-                var mouseY = event.clientY - rect.top;
-
-                // Check if the click occurred within the bounds of the button
-                if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
-                    mouseY >= btn.y && mouseY <= btn.y + btn.height) {
-                        btn.clicked();
-                }
-            });
+            const clickHandler = this.handleButtonClick(btn);
+            canvas.addEventListener("click", clickHandler);
+            this.clickHandlers.push(clickHandler);
         }
 
-        canvas.addEventListener("mousedown", (event) => {
-            if (!this.alarmFlag) {
-                let mouseX = event.clientX - canvas.offsetLeft;
-                let mouseY = event.clientY - canvas.offsetTop;
+        canvas.addEventListener("mousedown", this.handleMouseDown);
+        canvas.addEventListener("mouseup", this.handleMouseUp);
+        canvas.addEventListener("mousemove", this.handleMouseMove);
+        
+    }
+
+
+    // buttons click handler
+    handleButtonClick = (btn) => {
+        return function(event) {
+            console.log("click");
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = event.clientX - rect.left;
+            var mouseY = event.clientY - rect.top;
     
-                // check if any box was clicked
-                for (let i = 0; i < this.boxes.length; i++) {
-                    let box = this.boxes[i];
-                    if (mouseX >= box.x && mouseX <= box.x + box.width &&
-                        mouseY >= box.y && mouseY <= box.y + box.height) {
-                        box.isDragging = true; // start dragging box
-                    }
-                }
+            // Check if the click occurred within the bounds of the button
+            if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
+                mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+                btn.clicked();
+            }
+        }  
+    }
 
-                // check if any arrow was clicked
-                for (let i = 0; i < this.arrows.length; i++) {
-                    let arrow = this.arrows[i];
-                    if (mouseX >= arrow.x && mouseX <= arrow.x + arrow.width &&
-                        mouseY >= arrow.y && mouseY <= arrow.y + arrow.height) {
-                        arrow.isDragging = true; // start dragging arrow
-                    }
+    handleMouseUp = (event) => {
+        if (!this.alarmFlag) {
+            for (let i = 0; i < this.boxes.length; i++) {
+                let box = this.boxes[i];
+                if (box.isDragging) {
+                    box.isDragging = false;
                 }
             }
-        });
-        
-        canvas.addEventListener("mouseup", (event) => {
-            if (!this.alarmFlag) {
-                for (let i = 0; i < this.boxes.length; i++) {
-                    let box = this.boxes[i];
-                    if (box.isDragging) {
-                        box.isDragging = false;
-                    }
+    
+            for (let i = 0; i < this.arrows.length; i++) {
+                let arrow = this.arrows[i];
+                if (arrow.isDragging) {
+                    arrow.isDragging = false;
                 }
+            }
+        }
+    }
 
-                for (let i = 0; i < this.arrows.length; i++) {
-                    let arrow = this.arrows[i];
-                    if (arrow.isDragging) {
-                        arrow.isDragging = false;
-                    }
+
+    handleMouseDown = (event) => {
+        if (!this.alarmFlag) {
+            let mouseX = event.clientX - canvas.offsetLeft;
+            let mouseY = event.clientY - canvas.offsetTop;
+    
+            // check if any box was clicked
+            for (let i = 0; i < this.boxes.length; i++) {
+                let box = this.boxes[i];
+                if (mouseX >= box.x && mouseX <= box.x + box.width &&
+                    mouseY >= box.y && mouseY <= box.y + box.height) {
+                    box.isDragging = true; // start dragging box
                 }
             }
-        });
-        
-        canvas.addEventListener("mousemove", (event) => {
-            if (!this.alarmFlag) {
-                let mouseX = event.clientX - canvas.offsetLeft;
-                let mouseY = event.clientY - canvas.offsetTop;
-                // this.moveBox(mouseX, mouseY);
-                this.moveObject(mouseX, mouseY);
+    
+            // check if any arrow was clicked
+            for (let i = 0; i < this.arrows.length; i++) {
+                let arrow = this.arrows[i];
+                if (mouseX >= arrow.x && mouseX <= arrow.x + arrow.width &&
+                    mouseY >= arrow.y && mouseY <= arrow.y + arrow.height) {
+                    arrow.isDragging = true; // start dragging arrow
+                }
             }
-        });
+        }
+    }
+
+    handleMouseMove = (event) => {
+        if (!this.alarmFlag) {
+            let mouseX = event.clientX - canvas.offsetLeft;
+            let mouseY = event.clientY - canvas.offsetTop;
+            this.moveObject(mouseX, mouseY);
+        }
+    }
+
+
+    // Later, when changing levels
+    clearEvent() {
+        console.log("clearing events");
+        for (let i = 0; i < this.clickHandlers.length; i++) {
+            canvas.removeEventListener("click", this.clickHandlers[i]);
+        }
+
+        canvas.removeEventListener("mousedown", this.handleMouseDown);
+        canvas.removeEventListener("mouseup", this.handleMouseUp);
+        canvas.removeEventListener("mousemove", this.handleMouseMove);
+
 
     }
+
+    // events() {
+
+    //     for (let i = 0; i < this.buttons.length; i++) {
+
+    //         const btn = this.buttons[i];
+            
+    //         // btn.addEventListener("click", function() {
+    //         //     btn.clicked();
+    //         // });
+    //         canvas.addEventListener("click", function(event) {
+
+    //             var rect = canvas.getBoundingClientRect();
+    //             var mouseX = event.clientX - rect.left;
+    //             var mouseY = event.clientY - rect.top;
+
+    //             // Check if the click occurred within the bounds of the button
+    //             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
+    //                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+    //                     btn.clicked();
+    //             }
+    //         });
+    //     }
+
+    //     canvas.addEventListener("mousedown", (event) => {
+    //         if (!this.alarmFlag) {
+    //             let mouseX = event.clientX - canvas.offsetLeft;
+    //             let mouseY = event.clientY - canvas.offsetTop;
+    
+    //             // check if any box was clicked
+    //             for (let i = 0; i < this.boxes.length; i++) {
+    //                 let box = this.boxes[i];
+    //                 if (mouseX >= box.x && mouseX <= box.x + box.width &&
+    //                     mouseY >= box.y && mouseY <= box.y + box.height) {
+    //                     box.isDragging = true; // start dragging box
+    //                 }
+    //             }
+
+    //             // check if any arrow was clicked
+    //             for (let i = 0; i < this.arrows.length; i++) {
+    //                 let arrow = this.arrows[i];
+    //                 if (mouseX >= arrow.x && mouseX <= arrow.x + arrow.width &&
+    //                     mouseY >= arrow.y && mouseY <= arrow.y + arrow.height) {
+    //                     arrow.isDragging = true; // start dragging arrow
+    //                 }
+    //             }
+    //         }
+    //     });
+        
+    //     canvas.addEventListener("mouseup", (event) => {
+    //         if (!this.alarmFlag) {
+    //             for (let i = 0; i < this.boxes.length; i++) {
+    //                 let box = this.boxes[i];
+    //                 if (box.isDragging) {
+    //                     box.isDragging = false;
+    //                 }
+    //             }
+
+    //             for (let i = 0; i < this.arrows.length; i++) {
+    //                 let arrow = this.arrows[i];
+    //                 if (arrow.isDragging) {
+    //                     arrow.isDragging = false;
+    //                 }
+    //             }
+    //         }
+    //     });
+        
+    //     canvas.addEventListener("mousemove", (event) => {
+    //         if (!this.alarmFlag) {
+    //             let mouseX = event.clientX - canvas.offsetLeft;
+    //             let mouseY = event.clientY - canvas.offsetTop;
+    //             // this.moveBox(mouseX, mouseY);
+    //             this.moveObject(mouseX, mouseY);
+    //         }
+    //     });
+
+    // }
 
     update() { // draw each frame
 
         // console.log(this.outDoor.locked);
-
+    
         ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+        // fill the whole canvas with background color
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
 
         // zindex 0 zone//
         //////////////////
 
         // draw grid
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = gridColor;
         ctx.lineWidth = 1;
         for (let x = 0; x < canvas.width; x += gridSize) {
             ctx.beginPath();
@@ -198,7 +310,9 @@ class Level {
             ctx.stroke();
         }
 
-
+        //fill the first three units with pannel color
+        ctx.fillStyle = pannelColor;
+        ctx.fillRect(0, 0, canvas.width, ClaculateUnit(3));
 
 
         // zindex 1 zone//
@@ -342,20 +456,22 @@ class Level {
                             // console.log("arrow");
                             if(obj.direction != this.player.direction) {
     
-                                // if(Math.trunc(this.player.y) == obj.y || Math.trunc(this.player.x) == obj.x) {
-                                //     console.log("collision");
-                                //     this.player.direction = obj.direction;
-                                // }
     
                                 if(obj.direction == "left" || obj.direction == "right") {
                                     if(Math.trunc(this.player.y) == obj.y) {
                                         this.player.direction = obj.direction;
+                                        
+                                        // round down the player position to the grid
+                                        this.player.y = Math.floor(this.player.y / gridSize) * gridSize;
                                     }
                                 }
         
                                 if(obj.direction == "up" || obj.direction == "down") {
                                     if(Math.trunc(this.player.x) == obj.x) {
                                         this.player.direction = obj.direction;
+
+                                        // round down the player position to the grid
+                                        this.player.x = Math.floor(this.player.x / gridSize) * gridSize;
                                     }
                                 }
                                 
@@ -386,31 +502,34 @@ class Level {
 
                          
                     } else {
+
                         if (this.player.direction === "left") {
-                            if (this.player.x < obj.x + obj.width) {
+                            if (this.player.x < obj.x + obj.width && this.player.y + this.player.height > obj.y && this.player.y < obj.y + obj.height) {
                                 this.player.isMoving = false;
                             }
                         }
                         if (this.player.direction === "right") {
-                            if (this.player.x + this.player.width > obj.x) {
+                            if (this.player.x + this.player.width > obj.x && this.player.y + this.player.height > obj.y && this.player.y < obj.y + obj.height) {
                                 this.player.isMoving = false;
                             }
                         }
                         if (this.player.direction === "up") {
-                            if (this.player.y < obj.y + obj.height) {
+                            if (this.player.y < obj.y + obj.height && this.player.x + this.player.width > obj.x && this.player.x < obj.x + obj.width) {
                                 this.player.isMoving = false;
                             }
                         }
                         if (this.player.direction === "down") {
-                            if (this.player.y + this.player.height > obj.y) {
+                            if (this.player.y + this.player.height > obj.y && this.player.x + this.player.width > obj.x && this.player.x < obj.x + obj.width) {
                                 this.player.isMoving = false;
                             }
                         }
+
                     }
 
                 }
             }
         }
+
 
     }
 
@@ -460,7 +579,11 @@ class Level {
         }
 
     }
-
+    
+    stopAlarm() {
+        console.log("stop alarm");
+        this.alarm.stop();
+    }
     // draw() {
     //     setInterval(this.update, frameRate);
     // }

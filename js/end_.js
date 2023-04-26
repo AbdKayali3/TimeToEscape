@@ -9,16 +9,16 @@ let scenes = [
     // 2 how to play
     // 3 losing screen
     // 4 thank you for playing
-    Menu,
-    HowToPlay,
-    ThankYou,
-    GameOver,
+    new Menu(),
+    new HowToPlay(),
+    new ThankYou(),
+    new GameOver(),
 ];
 
 let lvls = [
-    Level,
-    Level,
-    Level,
+    new Level(),
+    new Level(),
+    new Level(),
 ];
 
 
@@ -71,32 +71,30 @@ function Losing() {
 function lvlChanger(lvl, sceneType) {
     // console.log('lvlChanger');
     currentScene.clearEvent();
-    if (currentScene.hasAlarm) {
-        currentScene.stopAlarm();
-    }
-
-    currentScene = null;
     clearEverything();
     if(sceneType == 1) {
-        currentScene = new scenes[lvl]();
+        currentScene = scenes[lvl];
     } else {
         // currentScene = lvls[lvl];
         if(lvl <= lvls.length - 1) {
 
-            // if (currentScene == lvls[lvl]) {
-            //     lvls[lvl] = null;
-            //     currentScene = new currentScene.constructor();
-            //     lvls[lvl] = currentScene;
-            // } else {
-                currentScene = new lvls[lvl]();
-            // }
+            if (currentScene == lvls[lvl]) {
+                lvls[lvl] = null;
+                currentScene = new currentScene.constructor();
+                lvls[lvl] = currentScene;
+            } else {
+                currentScene = lvls[lvl];
+            }
 
         } else {
             console.log('end of lvls');
-            currentScene = new scenes[2]();
+            currentScene = scenes[2];
         }
     }
-    // clearEverything();
+    clearEverything();
+
+    // canvas = document.getElementById("myCanvas");
+    // ctx = canvas.getContext("2d");
 
     init();
 }

@@ -1,5 +1,5 @@
-let canvas = document.getElementById("myCanvas");
-let ctx = canvas.getContext("2d");
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
 canvas.width = 1280;
 // canvas.height = 705;
 canvas.height = 801;
@@ -7,6 +7,7 @@ canvas.height = 801;
 const font = 'VT323';
 const gridColor = "#00000030";
 const bgColor = "#6A6A84";
+const pannelColor = "#5D5D77";
 
 const FPS = 60;
 const frameRate = 1000 / FPS;

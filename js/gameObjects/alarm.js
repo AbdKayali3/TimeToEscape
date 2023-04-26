@@ -1,31 +1,33 @@
 class Alarm extends GameObject {
     constructor(x, y, width, height, time) {
-        super(x, y, width, height);
-        this.time = time;
-        this.startTime = Date.now();
-        this.alarmFlag = false;
-        // console.log("timer created");
+      super(x, y, width, height);
+      this.time = time;
+      this.startTime = Date.now();
+      this.alarmFlag = false;
+      this.animationFrameId = null;
     }
-
+  
     start() {
-        this.startTime = Date.now();
-        window.requestAnimationFrame(() => this.tick());
-
+      this.startTime = Date.now();
+      this.tick();
     }
-
+  
+    stop() {
+      if (this.animationFrameId) {
+        window.cancelAnimationFrame(this.animationFrameId);
+        this.animationFrameId = null;
+      }
+    }
+  
     tick() {
-        let elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
-        if (elapsedTime < this.time) {
-            this.time;
-            this.draw(this.time - elapsedTime);
-            window.requestAnimationFrame(() => this.tick());
-        } else {
-            this.alarmFlag = true;
-            this.draw(0);
-        }
-        // console.log("timer ticked");
-
-        // console.log("tick");
+      let elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+      if (elapsedTime < this.time) {
+        this.draw(this.time - elapsedTime);
+        this.animationFrameId = window.requestAnimationFrame(() => this.tick());
+      } else {
+        this.alarmFlag = true;
+        this.draw(0);
+      }
     }
 
     draw(time) {
@@ -35,6 +37,6 @@ class Alarm extends GameObject {
         ctx.fillStyle = "red";
         ctx.fill();
         ctx.font = ClaculateUnit(1)+"px "+ font;
-        ctx.fillText(time, this.x+ClaculateUnit(0.8), this.y+ClaculateUnit(0.35));
+        ctx.fillText(time, this.x+ClaculateUnit(0.8), this.y+ClaculateUnit(0.27));
     }
 }

@@ -4,32 +4,74 @@ class Scene {
             new Button(ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), true, 2, "play", 0),
             // new Button(ClaculateUnit(6), ClaculateUnit(2), ClaculateUnit(2), ClaculateUnit(2), false, null, "test", "test"),
         ];
+        this.clickHandlers = [];
+        this.hasAlarm = false;
     }
 
     start() {
-
+        // this.clickHandlers = [];
     }
 
-    events() {
-        for (let i = 0; i < this.buttons.length; i++) {
+    // events() {
+    //     for (let i = 0; i < this.buttons.length; i++) {
 
-            const btn = this.buttons[i];
+    //         const btn = this.buttons[i];
             
-            // btn.addEventListener("click", function() {
-            //     btn.clicked();
-            // });
-            canvas.addEventListener("click", function(event) {
+    //         // btn.addEventListener("click", function() {
+    //         //     btn.clicked();
+    //         // });
+    //         canvas.addEventListener("click", function(event) {
 
-                var rect = canvas.getBoundingClientRect();
-                var mouseX = event.clientX - rect.left;
-                var mouseY = event.clientY - rect.top;
+    //             var rect = canvas.getBoundingClientRect();
+    //             var mouseX = event.clientX - rect.left;
+    //             var mouseY = event.clientY - rect.top;
 
-                // Check if the click occurred within the bounds of the button
-                if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
-                    mouseY >= btn.y && mouseY <= btn.y + btn.height) {
-                        btn.clicked();
-                }
-            });
+    //             // Check if the click occurred within the bounds of the button
+    //             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
+    //                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+    //                     btn.clicked();
+    //             }
+    //         });
+    //     }
+    // }
+
+    handleButtonClick = (btn) => {
+        return function(event) {
+            console.log("click");
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = event.clientX - rect.left;
+            var mouseY = event.clientY - rect.top;
+    
+            // Check if the click occurred within the bounds of the button
+            if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
+                mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+                btn.clicked();
+            }
+        }  
+    }
+    
+    events() {
+        
+        // // Remove old click handlers
+        for (let i = 0; i < this.clickHandlers.length; i++) {
+            canvas.removeEventListener("click", this.clickHandlers[i]);
+        }
+        this.clickHandlers = [];
+    
+        // Add new click handlers
+        for (let i = 0; i < this.buttons.length; i++) {
+            const btn = this.buttons[i];
+            const clickHandler = this.handleButtonClick(btn);
+            canvas.addEventListener("click", clickHandler);
+            this.clickHandlers.push(clickHandler);
+        }
+    }
+    
+    // Later, when changing levels
+    clearEvent() {
+        console.log("clearing events");
+        for (let i = 0; i < this.clickHandlers.length; i++) {
+            canvas.removeEventListener("click", this.clickHandlers[i]);
         }
     }
 
