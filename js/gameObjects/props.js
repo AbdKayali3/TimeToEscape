@@ -8,6 +8,8 @@ class Props extends GameObject {
         // 5 = down_computer_center, 6 = down_computer, 7 = down_chemicals, 8 = empty_corner
         // 9 = side_computer_center, 10 = side_computer_middle , 11 = side_computer 
         // 12 = side_chemicals, 13 = side_empty, 14 = tbl
+        // 15 = right_computer_center, 16 = right_computer_middle , 17 = right_computer 
+        // 18 = right_chemicals, 19 = right_empty
         this.type = type; 
 
 
@@ -43,7 +45,6 @@ class Props extends GameObject {
             case 8:
                 this.width = ClaculateUnit(3);
                 this.height = ClaculateUnit(3);
-
                 break;
             case 9:
                 this.width = ClaculateUnit(3);
@@ -67,6 +68,26 @@ class Props extends GameObject {
                 break;
             case 14:
                 this.width = ClaculateUnit(8);
+                this.height = ClaculateUnit(3);
+                break;
+            case 15:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(12);
+                break;
+            case 16:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 17:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 18:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(6);
+                break;
+            case 19:
+                this.width = ClaculateUnit(3);
                 this.height = ClaculateUnit(3);
                 break;
             default:
@@ -129,6 +150,21 @@ class Props extends GameObject {
                 break;
             case 14:
                 src = "images/probs/tbl.png";
+                break;
+            case 15:
+                src = "images/probs/right_computer_center.png";
+                break;
+            case 16:
+                src = "images/probs/right_computer_middle.png";
+                break;
+            case 17:
+                src = "images/probs/right_computer.png";
+                break;
+            case 18:
+                src = "images/probs/right_chemicals.png";
+                break;
+            case 19:
+                src = "images/probs/side_empty.png";
                 break;
             default:
                 src = "images/probs/top_computer.png";
