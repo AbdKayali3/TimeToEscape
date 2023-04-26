@@ -125,7 +125,7 @@ class Level {
     // buttons click handler
     handleButtonClick = (btn) => {
         return function(event) {
-            console.log("click");
+            
             var rect = canvas.getBoundingClientRect();
             var mouseX = event.clientX - rect.left;
             var mouseY = event.clientY - rect.top;
@@ -133,6 +133,8 @@ class Level {
             // Check if the click occurred within the bounds of the button
             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
+                console.log("click");
+                clickAudio.play();
                 btn.clicked();
             }
         }  
@@ -144,6 +146,7 @@ class Level {
                 let box = this.boxes[i];
                 if (box.isDragging) {
                     box.isDragging = false;
+                    leaveAudio.play();
                 }
             }
     
@@ -151,6 +154,7 @@ class Level {
                 let arrow = this.arrows[i];
                 if (arrow.isDragging) {
                     arrow.isDragging = false;
+                    leaveAudio.play();
                 }
             }
         }
@@ -168,6 +172,7 @@ class Level {
                 if (mouseX >= box.x && mouseX <= box.x + box.width &&
                     mouseY >= box.y && mouseY <= box.y + box.height) {
                     box.isDragging = true; // start dragging box
+                    grabAudio.play();
                 }
             }
     
@@ -177,6 +182,7 @@ class Level {
                 if (mouseX >= arrow.x && mouseX <= arrow.x + arrow.width &&
                     mouseY >= arrow.y && mouseY <= arrow.y + arrow.height) {
                     arrow.isDragging = true; // start dragging arrow
+                    grabAudio.play();
                 }
             }
         }
@@ -310,6 +316,7 @@ class Level {
 
         if(this.alarm.alarmFlag && !this.alarmFlag) {
             this.player.show = true;
+            spiderAudio.play();
             this.enemy.actiate();
         }
         this.alarmFlag = this.alarm.alarmFlag;
@@ -364,6 +371,8 @@ class Level {
         }
 
         if (this.player.touch(this.outDoor)) {
+            spiderAudio.pause();
+            winningAudio.play();
             winning();
         }
 
@@ -392,7 +401,7 @@ class Level {
                                     // if(Math.trunc(this.player.y) == obj.y) {
                                     if(Math.floor(this.player.y / gridSize) * gridSize == obj.y) {
                                         this.player.direction = obj.direction;
-                                        
+                                        arrowAudio.play();
                                         // round down the player position to the grid
                                         this.player.y = Math.floor(this.player.y / gridSize) * gridSize;
                                     }
@@ -402,7 +411,7 @@ class Level {
                                     // if(Math.trunc(this.player.x) == obj.x) {
                                     if(Math.floor(this.player.x / gridSize) * gridSize == obj.x) {
                                         this.player.direction = obj.direction;
-
+                                        arrowAudio.play();
                                         // round down the player position to the grid
                                         this.player.x = Math.floor(this.player.x / gridSize) * gridSize;
                                     }
@@ -414,6 +423,7 @@ class Level {
                             if(obj.locked) {
                                 // console.log("locked");
                                 obj.locked = false;
+                                switchAudio.play();
                                 let allSwitchesUnLocked = true;
 
                                 for (let i = 0; i < this.switches.length; i++) {
@@ -428,6 +438,7 @@ class Level {
                                     // console.log("all switches unlocked");
                                     this.lcoked = false;
                                     this.outDoor.locked = false;
+                                    unlockedAudio.play();
                                 }
                             }
                         }
@@ -473,6 +484,8 @@ class Level {
         }
 
         if (this.enemy.touch(this.player)) {
+            spiderAudio.pause();
+            deathAudio.play();
             Losing();
         }
 

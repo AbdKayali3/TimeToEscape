@@ -14,7 +14,11 @@ class Scene {
 
     handleButtonClick = (btn) => {
         return function(event) {
-            console.log("click");
+            if (!isMusicPlaying) {
+                musicAudio.play();
+                isMusicPlaying = true;
+            }
+            
             var rect = canvas.getBoundingClientRect();
             var mouseX = event.clientX - rect.left;
             var mouseY = event.clientY - rect.top;
@@ -23,6 +27,8 @@ class Scene {
             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
                 btn.clicked();
+                console.log("click");
+                clickAudio.play();
             }
         }  
     }

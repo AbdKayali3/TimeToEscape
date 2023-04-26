@@ -23,9 +23,11 @@ class Alarm extends GameObject {
       let elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
       if (elapsedTime < this.time) {
         this.draw(this.time - elapsedTime);
+        tickAudio.play();
         this.animationFrameId = window.requestAnimationFrame(() => this.tick());
       } else {
         this.alarmFlag = true;
+        alarmAudio.play();
         this.draw(0);
       }
     }
