@@ -6,11 +6,11 @@ class Menu extends Scene {
 
         this.text = [
             new TextOnly(0, ClaculateUnit(2), canvas.width, ClaculateUnit(3), "TIME TO ESCAPE", ClaculateUnit(3)),
-            new TextOnly(0, canvas.height - ClaculateUnit(3), canvas.width/3, ClaculateUnit(1), "Made by GeneralSam Games", ClaculateUnit(1)),
+            new TextOnly(0, canvas.height - ClaculateUnit(3), canvas.width/3, ClaculateUnit(1), "Made by: GeneralSam Games", ClaculateUnit(1)),
         ];
 
         this.buttons = [
-            new Button(middle, ClaculateUnit(7), widthOfBtn, ClaculateUnit(3), true, 2, "play", 0),
+            new Button(middle, ClaculateUnit(7), widthOfBtn, ClaculateUnit(3), true, 2, "play", currentlvlIndex),
             new Button(middle, ClaculateUnit(11), widthOfBtn, ClaculateUnit(3), true, 1, "How to play", 1),
             // new Button(middle, ClaculateUnit(15), widthOfBtn, ClaculateUnit(3), true, 1, "Thank you", 2),
         ];

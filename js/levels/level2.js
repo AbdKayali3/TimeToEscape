@@ -39,8 +39,6 @@ class Level2 extends Level {
             new Box(ClaculateUnit(7), ClaculateUnit(8), ClaculateUnit(3), ClaculateUnit(3)),
             new Box(ClaculateUnit(2), ClaculateUnit(14), ClaculateUnit(3), ClaculateUnit(3)),
             new Box(ClaculateUnit(4), ClaculateUnit(17), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(1), ClaculateUnit(16), ClaculateUnit(3), ClaculateUnit(3)),
-            // new Box(ClaculateUnit(33), ClaculateUnit(19), ClaculateUnit(3), ClaculateUnit(3)),
         ];
 
         this.player = new Player(ClaculateUnit(this.yMain), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
