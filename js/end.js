@@ -91,6 +91,7 @@ function Losing() {
 
 function lvlChanger(lvl, sceneType) {
     // console.log('lvlChanger');
+    spiderAudio.pause();
     currentScene.clearEvent();
     if (currentScene.hasAlarm) {
         currentScene.stopAlarm();
