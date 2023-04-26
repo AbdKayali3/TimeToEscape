@@ -7,7 +7,7 @@ class Props extends GameObject {
         // 1 = top_computer_center, 2 = top_computer, 3 = top_chemicals, 4 = top_empty
         // 5 = down_computer_center, 6 = down_computer, 7 = down_chemicals, 8 = empty_corner
         // 9 = side_computer_center, 10 = side_computer_middle , 11 = side_computer 
-        // 12 = side_chemicals, 13 = side_empty
+        // 12 = side_chemicals, 13 = side_empty, 14 = tbl
         this.type = type; 
 
 
@@ -63,6 +63,10 @@ class Props extends GameObject {
                 break;
             case 13:
                 this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 14:
+                this.width = ClaculateUnit(8);
                 this.height = ClaculateUnit(3);
                 break;
             default:
@@ -122,6 +126,9 @@ class Props extends GameObject {
                 break;
             case 13:
                 src = "images/probs/side_empty.png";
+                break;
+            case 14:
+                src = "images/probs/tbl.png";
                 break;
             default:
                 src = "images/probs/top_computer.png";
