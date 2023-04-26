@@ -8,6 +8,31 @@ class Player extends GameObject {
 
     draw(color = "green", image = false, src = null) {
         if(this.show) {
+
+            if (artOn) {
+                image = true;
+            }
+            
+            if (src == null) {
+                switch (this.direction) {
+                    case "up":
+                        src = "images/gameobjects/player_up.png";
+                        break;
+                    case "down":
+                        src = "images/gameobjects/player_down.png";
+                        break;
+                    case "left":
+                        src = "images/gameobjects/player_left.png";
+                        break;
+                    case "right":
+                        src = "images/gameobjects/player_right.png";
+                        break;
+                    default:
+                        src = "images/gameobjects/player_up.png";
+                        break;
+                }
+            }
+
             super.draw(color, image, src);
         }
     }

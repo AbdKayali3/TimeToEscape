@@ -7,6 +7,29 @@ class Enemy extends Player {
     }
 
     draw(color = "white", image = false, src = null) {
+
+        if (artOn) {
+            image = true;
+        }
+
+        switch (this.direction) {
+            case "up":
+                src = "images/gameobjects/rocket_up.png";
+                break;
+            case "down":
+                src = "images/gameobjects/rocket_down.png";
+                break;
+            case "left":
+                src = "images/gameobjects/rocket_left.png";
+                break;
+            case "right":
+                src = "images/gameobjects/rocket_right.png";
+                break;
+            default:
+                src = "images/gameobjects/rocket_up.png";
+                break;
+        }
+
         super.draw(color, image, src);
     }
 

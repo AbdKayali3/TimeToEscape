@@ -7,10 +7,15 @@ class Switch extends GameObject {
     }
 
     draw(color = "orange", image = false, src = null) {
+
+        if (artOn) {
+            image = true;
+        }
+
         if(this.locked) {
             if (image) {
                 let img = new Image();
-                img.src = src;
+                img.src =  "images/gameobjects/switch_off.png";
                 ctx.drawImage(img, this.x, this.y, this.width, this.height);
             } else {
                 ctx.fillStyle = "darkred";
@@ -19,7 +24,7 @@ class Switch extends GameObject {
         } else {
             if (image) {
                 let img = new Image();
-                img.src = src;
+                img.src =  "images/gameobjects/switch_on.png";
                 ctx.drawImage(img, this.x, this.y, this.width, this.height);
             } else {
                 ctx.fillStyle = "darkgreen";

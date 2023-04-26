@@ -9,10 +9,15 @@ class Doors extends GameObject {
     //     super.draw(color, image, src);
     // }
     draw(color = "brown", image = false, src = null) {
+
+        if (artOn) {
+            image = true;
+        }
+
         if(!this.locked && this.type == "out") {
             if (image) {
                 let img = new Image();
-                img.src = src;
+                img.src = "images/gameobjects/door_end_green.png";
                 ctx.drawImage(img, this.x, this.y, this.width, this.height);
             } else {
                 ctx.fillStyle = "darkgreen";
@@ -21,6 +26,12 @@ class Doors extends GameObject {
         } else {
             if (image) {
                 let img = new Image();
+
+                if(this.type == "out") {
+                    src = "images/gameobjects/door_end_red.png";
+                } else {
+                    src = "images/gameobjects/door_start.png";
+                }
                 img.src = src;
                 ctx.drawImage(img, this.x, this.y, this.width, this.height);
             } else {

@@ -12,29 +12,6 @@ class Scene {
         // this.clickHandlers = [];
     }
 
-    // events() {
-    //     for (let i = 0; i < this.buttons.length; i++) {
-
-    //         const btn = this.buttons[i];
-            
-    //         // btn.addEventListener("click", function() {
-    //         //     btn.clicked();
-    //         // });
-    //         canvas.addEventListener("click", function(event) {
-
-    //             var rect = canvas.getBoundingClientRect();
-    //             var mouseX = event.clientX - rect.left;
-    //             var mouseY = event.clientY - rect.top;
-
-    //             // Check if the click occurred within the bounds of the button
-    //             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
-    //                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
-    //                     btn.clicked();
-    //             }
-    //         });
-    //     }
-    // }
-
     handleButtonClick = (btn) => {
         return function(event) {
             console.log("click");

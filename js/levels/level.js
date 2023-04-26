@@ -7,11 +7,11 @@ class Level {
         this.hasAlarm = true;
 
         this.walls = [
-            // new Wall(0, 0, canvas.width, ClaculateUnit(3)), // top section before actual walls
-            new Wall(0, ClaculateUnit(3), canvas.width, unit), // top wall
-            new Wall(0, canvas.height - unit, canvas.width, unit), // bottom wall
-            new Wall(0, ClaculateUnit(3), unit, canvas.height), // left wall
-            new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height), // right wall
+            new Wall(0, ClaculateUnit(3), canvas.width, unit, "top"), // top wall
+            new Wall(0, ClaculateUnit(3), unit, canvas.height, "side"), // left wall
+            new Wall(canvas.width - unit, ClaculateUnit(3), unit, canvas.height, "side"), // right wall
+            new Wall(0, canvas.height - unit, canvas.width, unit, "down"), // bottom wall
+            // new Wall(ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(1), ClaculateUnit(3), "piece_v_end"), // bottom wall
         ];
 
         this.buttons = [
@@ -26,32 +26,29 @@ class Level {
 
 
 
-        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(1.5), ClaculateUnit(2), ClaculateUnit(1), 10);
+        this.alarm = new Alarm((canvas.width/2) - ClaculateUnit(0.5), ClaculateUnit(1.5), ClaculateUnit(2), ClaculateUnit(1), 5);
 
-        this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "out", true);
-        this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "in");
+        // this.outDoor = new Doors(ClaculateUnit(30), ClaculateUnit(3), ClaculateUnit(3), ClaculateUnit(2), "out", true);
+        // this.innerDoor = new Doors(ClaculateUnit(30), ClaculateUnit(23), ClaculateUnit(3), ClaculateUnit(2), "in");
 
         this.props = [
-            new Props(ClaculateUnit(8), ClaculateUnit(4), ClaculateUnit(12), ClaculateUnit(3), true),
+            // new Props(ClaculateUnit(8), ClaculateUnit(4), true, 1),
         ];
 
         this.boxes = [
-            new Box(ClaculateUnit(4), ClaculateUnit(4), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(5), ClaculateUnit(5), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(6), ClaculateUnit(6), ClaculateUnit(1), ClaculateUnit(1)),
-            new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
+            // new Box(ClaculateUnit(10), ClaculateUnit(10), ClaculateUnit(3), ClaculateUnit(3)),
         ];
 
         this.arrows = [
-            new Arrow(ClaculateUnit(15), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), "left"),
+            // new Arrow(ClaculateUnit(15), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), "left"),
         ];
 
         this.switches = [
-            new Switch(ClaculateUnit(30), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), true),
+            // new Switch(ClaculateUnit(30), ClaculateUnit(15), ClaculateUnit(3), ClaculateUnit(3), true),
         ];
 
-        this.player = new Player(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
-        this.enemy = new Enemy(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
+        // this.player = new Player(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
+        // this.enemy = new Enemy(ClaculateUnit(30), ClaculateUnit(21), ClaculateUnit(3), ClaculateUnit(3), "up");
 
 
         console.log('lvl created');
@@ -202,83 +199,6 @@ class Level {
 
 
     }
-
-    // events() {
-
-    //     for (let i = 0; i < this.buttons.length; i++) {
-
-    //         const btn = this.buttons[i];
-            
-    //         // btn.addEventListener("click", function() {
-    //         //     btn.clicked();
-    //         // });
-    //         canvas.addEventListener("click", function(event) {
-
-    //             var rect = canvas.getBoundingClientRect();
-    //             var mouseX = event.clientX - rect.left;
-    //             var mouseY = event.clientY - rect.top;
-
-    //             // Check if the click occurred within the bounds of the button
-    //             if (mouseX >= btn.x && mouseX <= btn.x + btn.width &&
-    //                 mouseY >= btn.y && mouseY <= btn.y + btn.height) {
-    //                     btn.clicked();
-    //             }
-    //         });
-    //     }
-
-    //     canvas.addEventListener("mousedown", (event) => {
-    //         if (!this.alarmFlag) {
-    //             let mouseX = event.clientX - canvas.offsetLeft;
-    //             let mouseY = event.clientY - canvas.offsetTop;
-    
-    //             // check if any box was clicked
-    //             for (let i = 0; i < this.boxes.length; i++) {
-    //                 let box = this.boxes[i];
-    //                 if (mouseX >= box.x && mouseX <= box.x + box.width &&
-    //                     mouseY >= box.y && mouseY <= box.y + box.height) {
-    //                     box.isDragging = true; // start dragging box
-    //                 }
-    //             }
-
-    //             // check if any arrow was clicked
-    //             for (let i = 0; i < this.arrows.length; i++) {
-    //                 let arrow = this.arrows[i];
-    //                 if (mouseX >= arrow.x && mouseX <= arrow.x + arrow.width &&
-    //                     mouseY >= arrow.y && mouseY <= arrow.y + arrow.height) {
-    //                     arrow.isDragging = true; // start dragging arrow
-    //                 }
-    //             }
-    //         }
-    //     });
-        
-    //     canvas.addEventListener("mouseup", (event) => {
-    //         if (!this.alarmFlag) {
-    //             for (let i = 0; i < this.boxes.length; i++) {
-    //                 let box = this.boxes[i];
-    //                 if (box.isDragging) {
-    //                     box.isDragging = false;
-    //                 }
-    //             }
-
-    //             for (let i = 0; i < this.arrows.length; i++) {
-    //                 let arrow = this.arrows[i];
-    //                 if (arrow.isDragging) {
-    //                     arrow.isDragging = false;
-    //                 }
-    //             }
-    //         }
-    //     });
-        
-    //     canvas.addEventListener("mousemove", (event) => {
-    //         if (!this.alarmFlag) {
-    //             let mouseX = event.clientX - canvas.offsetLeft;
-    //             let mouseY = event.clientY - canvas.offsetTop;
-    //             // this.moveBox(mouseX, mouseY);
-    //             this.moveObject(mouseX, mouseY);
-    //         }
-    //     });
-
-    // }
 
     update() { // draw each frame
 

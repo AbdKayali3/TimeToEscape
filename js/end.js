@@ -16,7 +16,7 @@ let scenes = [
 ];
 
 let lvls = [
-    Level,
+    Level1,
     Level,
     Level,
 ];
@@ -111,7 +111,7 @@ function clearEverything() {
     ActiveColisionObjects = [];
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = canvas.width;
+    // canvas.width = canvas.width;
     // canvas.beginPath();
 }
 

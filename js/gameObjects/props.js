@@ -1,11 +1,133 @@
 class Props extends GameObject {
-    constructor(x, y, width, height, iscollision = false) {
+    constructor(x, y, iscollision = false ,type) {
         
-        super(x, y, width, height);
+        super(x, y, null, null);
         this.iscollision = iscollision;
+        
+        // 1 = top_computer_center, 2 = top_computer, 3 = top_chemicals, 4 = top_empty
+        // 5 = down_computer_center, 6 = down_computer, 7 = down_chemicals, 8 = empty_corner
+        // 9 = side_computer_center, 10 = side_computer_middle , 11 = side_computer 
+        // 12 = side_chemicals, 13 = side_empty
+        this.type = type; 
+
+
+        switch (this.type) {
+            case 1:
+                this.width = ClaculateUnit(12);
+                this.height = ClaculateUnit(3);
+                break;
+            case 2:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 3:
+                this.width = ClaculateUnit(6);
+                this.height = ClaculateUnit(3);
+                break;
+            case 4:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 5:
+                this.width = ClaculateUnit(12);
+                this.height = ClaculateUnit(3);
+                break;
+            case 6:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 7:
+                this.width = ClaculateUnit(6);
+                this.height = ClaculateUnit(3);
+                break;
+            case 8:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+
+                break;
+            case 9:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(12);
+                break;
+            case 10:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 11:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            case 12:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(6);
+                break;
+            case 13:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+            default:
+                this.width = ClaculateUnit(3);
+                this.height = ClaculateUnit(3);
+                break;
+        }
+
+
+
     }
 
+    
+
     draw(color = "blue", image = false, src = null) {
+
+        if (artOn) {
+            image = true;
+        }
+
+        switch (this.type) {
+            case 1:
+                src = "images/probs/top_computer_center.png";
+                break;
+            case 2:
+                src = "images/probs/top_computer.png";
+                break;
+            case 3:
+                src = "images/probs/top_chemicals.png";
+                break;
+            case 4:
+                src = "images/probs/top_empty.png";
+                break;
+            case 5:
+                src = "images/probs/down_computer_center.png";
+                break;
+            case 6:
+                src = "images/probs/down_computer.png";
+                break;
+            case 7:
+                src = "images/probs/down_chemicals.png";
+                break;
+            case 8:
+                src = "images/probs/empty_corner.png";
+                break;
+            case 9:
+                src = "images/probs/side_computer_center.png";
+                break;
+            case 10:
+                src = "images/probs/side_computer_middle.png";
+                break;
+            case 11:
+                src = "images/probs/side_computer.png";
+                break;
+            case 12:
+                src = "images/probs/side_chemicals.png";
+                break;
+            case 13:
+                src = "images/probs/side_empty.png";
+                break;
+            default:
+                src = "images/probs/top_computer.png";
+                break;
+        }
+
         super.draw(color, image, src);
     }
 }
